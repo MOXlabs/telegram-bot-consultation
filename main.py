@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
 from flask import Flask
+import threading
 
 # Создаем Flask app для веб-сервера
 app = Flask(__name__)
@@ -15,6 +16,10 @@ def home():
 @app.route('/health')
 def health():
     return "OK", 200
+
+@app.route('/ping')
+def ping():
+    return "pong", 200
 
 # Настройка логирования
 logging.basicConfig(
@@ -158,7 +163,7 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
         await update.message.reply_text(
-            "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n",
+            "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\nХотите записать еще одного человека?",
             reply_markup=reply_markup
         )
 
@@ -226,8 +231,8 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     return ConversationHandler.END
 
-def main():
-    """Основная функция запуска бота"""
+def run_bot():
+    """Запуск Telegram бота"""
     print("🚀 Запускаем Telegram бота...")
     
     try:
@@ -257,7 +262,7 @@ def main():
         # Запускаем бота
         application.run_polling(
             drop_pending_updates=True,
-            close_loop=False  # Важно для Render
+            close_loop=False
         )
         
     except Exception as e:
@@ -265,9 +270,18 @@ def main():
         import traceback
         traceback.print_exc()
 
+def run_flask():
+    """Запуск Flask сервера"""
+    print("🌐 Запускаем Flask сервер...")
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port, debug=False)
+
 if __name__ == '__main__':
     print("🤖 Инициализация бота...")
     
-    # Запускаем только бота, без Flask
-    # Flask не нужен для работы бота, только для UptimeRobot
-    main()
+    # Запускаем Flask в отдельном потоке
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
+    
+    # Запускаем бота в основном потоке
+    run_bot()
