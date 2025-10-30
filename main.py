@@ -5,8 +5,9 @@ from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardB
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, ConversationHandler
 from flask import Flask
 import threading
+import asyncio
 
-# Создаем Flask app для веб-сервера (обязательно для Render)
+# Создаем Flask app для веб-сервера
 app = Flask(__name__)
 
 @app.route('/')
@@ -16,10 +17,6 @@ def home():
 @app.route('/health')
 def health():
     return "OK", 200
-
-@app.route('/ping')
-def ping():
-    return "pong", 200
 
 # Настройка логирования
 logging.basicConfig(
@@ -40,7 +37,7 @@ def get_moscow_time():
 def format_moscow_time():
     return get_moscow_time().strftime('%d.%m.%Y %H:%M:%S (МСК)')
 
-# Данные бота из переменных окружения Render
+# Данные бота
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '8287276471:AAEfJuB-8GVERNkrnW4thGdU4B6JpnN4rmM')
 ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '744451342')
 
@@ -157,7 +154,7 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
         await update.message.reply_text(
-            "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\nХотите записать еще одного человека?",
+            "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n",
             reply_markup=reply_markup)
 
         for key in ['name', 'contact', 'problem', 'datetime']:
@@ -215,8 +212,12 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return ConversationHandler.END
 
 def run_bot():
-    """Запуск Telegram бота"""
+    """Запуск Telegram бота с отдельным event loop"""
     print("🚀 Запускаем Telegram бота на Render...")
+    
+    # Создаем новый event loop для этого потока
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     
     try:
         application = Application.builder().token(BOT_TOKEN).build()
@@ -241,11 +242,15 @@ def run_bot():
         
         print("✅ Telegram бот запущен и работает на Render!")
         
-        # Запускаем бота
-        application.run_polling(drop_pending_updates=True)
+        # Запускаем бота в этом event loop
+        loop.run_until_complete(application.run_polling(drop_pending_updates=True))
         
     except Exception as e:
         print(f"❌ Ошибка запуска бота: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        loop.close()
 
 if __name__ == '__main__':
     print("🤖 Инициализация бота на Render...")
@@ -254,6 +259,6 @@ if __name__ == '__main__':
     bot_thread = threading.Thread(target=run_bot, daemon=True)
     bot_thread.start()
     
-    # Запускаем Flask сервер (обязательно для Render)
+    # Запускаем Flask сервер
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False)
