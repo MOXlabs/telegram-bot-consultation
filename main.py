@@ -105,7 +105,7 @@ async def get_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return ConversationHandler.END
 
     context.user_data['name'] = update.message.text
-    await update.message.reply_text("📞 Укажите ваш номер телефона или другой способ связи:")
+    await update.message.reply_text("📞 Укажите ваш номер телефона или другой способ связи (Telegram, WhatsApp и т.д.):")
     return CONTACT
 
 async def get_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -113,7 +113,7 @@ async def get_contact(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         return ConversationHandler.END
 
     context.user_data['contact'] = update.message.text
-    await update.message.reply_text("❓ Кратко опишите суть проблемы:")
+    await update.message.reply_text("❓ Кратко опишите суть проблемы (чтобы понимать, с чем мы будем работать):")
     return PROBLEM
 
 async def get_problem(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -121,7 +121,8 @@ async def get_problem(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
         return ConversationHandler.END
 
     context.user_data['problem'] = update.message.text
-    await update.message.reply_text("📅 Укажите желаемые дату и время для консультации:")
+    await update.message.reply_text("📅 Укажите желаемые дату и время для консультации:\n\n"
+        "Например: '25 декабря 15:30' или 'завтра в 18:00'")
     return DATETIME
 
 async def get_datetime(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -163,7 +164,7 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
         await update.message.reply_text(
-            "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\nХотите записать еще одного человека?",
+            "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n",
             reply_markup=reply_markup
         )
 
