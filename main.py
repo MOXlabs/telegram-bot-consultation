@@ -14,6 +14,14 @@ app = Flask(__name__)
 def home():
     return "🤖 Бот для консультаций работает! " + datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+@app.route('/health')
+def health():
+    return "OK", 200
+
+@app.route('/ping')
+def ping():
+    return "pong", 200
+
 # Настройка логирования
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -51,6 +59,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             caption="👋 Привет, я Арина - бот адвоката Алексея Мельникова. Я помогу Вам записаться на консультацию"
         )
     except Exception as e:
+        logger.error(f"Ошибка отправки фото: {e}")
         await update.message.reply_text(
             "👋 Привет, я Арина - бот адвоката Алексея Мельникова. Я помогу Вам записаться на консультацию"
         )
@@ -60,7 +69,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "Нажмите кнопку ниже чтобы начать заполнение заявки:",
-        reply_markup=reply_markup)
+        reply_markup=reply_markup
+    )
 
 async def handle_application_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message is None:
@@ -72,18 +82,22 @@ async def handle_application_button(update: Update, context: ContextTypes.DEFAUL
         context.user_data['first_click'] = False
         await update.message.reply_text(
             "Отлично! Давайте заполним заявку на консультацию.\n\n📝 Как к вам обращаться? (ФИО или имя)",
-            reply_markup=ReplyKeyboardRemove())
+            reply_markup=ReplyKeyboardRemove()
+        )
     else:
         try:
             await update.message.reply_photo(
                 photo=WELCOME_PHOTO_URL,
-                caption="👋 Снова здравствуйте! Заполним новую заявку на консультацию")
-        except Exception:
+                caption="👋 Снова здравствуйте! Заполним новую заявку на консультацию"
+            )
+        except Exception as e:
+            logger.error(f"Ошибка отправки фото: {e}")
             await update.message.reply_text("👋 Снова здравствуйте! Заполним новую заявку на консультацию")
 
         await update.message.reply_text(
             "📝 Как к вам обращаться? (ФИО или имя)",
-            reply_markup=ReplyKeyboardRemove())
+            reply_markup=ReplyKeyboardRemove()
+        )
 
     return NAME
 
@@ -151,15 +165,21 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         await update.message.reply_text(
             "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n",
-            reply_markup=reply_markup)
+            reply_markup=reply_markup
+        )
 
+        # Очищаем данные анкеты
         for key in ['name', 'contact', 'problem', 'datetime']:
             if key in context.user_data:
                 del context.user_data[key]
 
         return ConversationHandler.END
+    
     else:
-        await update.message.reply_text("🔄 Давайте заполним заявку заново.", reply_markup=ReplyKeyboardRemove())
+        await update.message.reply_text(
+            "🔄 Давайте заполним заявку заново.",
+            reply_markup=ReplyKeyboardRemove()
+        )
         await update.message.reply_text("📝 Как к вам обращаться? (ФИО или имя)")
         return NAME
 
@@ -184,10 +204,13 @@ Username: @{user.username if user.username else 'не указан'}
 ⏰ Время заявки: {format_moscow_time()}"""
 
     try:
-        await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=application_text)
-        logger.info("Заявка отправлена администратору")
+        await context.bot.send_message(
+            chat_id=ADMIN_CHAT_ID,
+            text=application_text
+        )
+        logger.info("✅ Заявка отправлена администратору")
     except Exception as e:
-        logger.error(f"Ошибка отправки заявки: {e}")
+        logger.error(f"❌ Ошибка отправки заявки: {e}")
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if update.message is None:
@@ -199,8 +222,10 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     await update.message.reply_text(
         '❌ Заявка отменена. Если захотите записаться, нажмите кнопку:',
-        reply_markup=reply_markup)
+        reply_markup=reply_markup
+    )
 
+    # Очищаем данные анкеты
     for key in ['name', 'contact', 'problem', 'datetime']:
         if key in context.user_data:
             del context.user_data[key]
@@ -237,6 +262,7 @@ def run_bot():
         application.add_handler(conv_handler)
         
         print("✅ Telegram бот запущен и работает!")
+        print("🤖 Бот готов принимать сообщения!")
         
         # Запускаем бота в этом event loop
         loop.run_until_complete(application.run_polling(drop_pending_updates=True))
@@ -257,4 +283,5 @@ if __name__ == '__main__':
     
     # Запускаем Flask сервер
     port = int(os.environ.get('PORT', 10000))
+    print(f"🌐 Flask сервер запущен на порту {port}")
     app.run(host='0.0.0.0', port=port, debug=False)
