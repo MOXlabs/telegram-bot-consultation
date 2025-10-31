@@ -161,25 +161,14 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         await send_application_to_admin(update, context)
         context.user_data['first_click'] = False
 
-        try:
-            await update.message.reply_photo(
-                photo=SUCCESS_PHOTO_URL,
-                caption="✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n"
-            )
-        except Exception as e:
-            logger.error(f"Ошибка отправки фото: {e}")
-            await update.message.reply_text(
-                "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n"
-            )
-
         keyboard = [[KeyboardButton("📝 Записаться на консультацию")]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
-        await update.message.reply_text(
-            "Нажмите кнопку ниже, чтобы начать заполнение заявки:",
-            reply_markup=reply_markup
+        await update.message.reply_photo(
+            photo=SUCCESS_PHOTO_URL,
+            caption="✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n"
         )
-        
+
         # Очищаем данные анкеты
         for key in ['name', 'contact', 'problem', 'datetime']:
             if key in context.user_data:
