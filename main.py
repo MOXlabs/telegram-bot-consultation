@@ -67,7 +67,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
     await update.message.reply_text(
-        "Нажмите кнопку ниже чтобы начать заполнение заявки:",
+        "Нажмите кнопку ниже, чтобы начать заполнение заявки:",
         reply_markup=reply_markup
     )
 
