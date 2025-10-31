@@ -45,7 +45,7 @@ BOT_TOKEN = os.environ.get('BOT_TOKEN', '8257818553:AAFNSfYB7L9gqg285lssp6x9djn1
 ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '744451342')
 
 WELCOME_PHOTO_URL = "https://i.ibb.co/yFdZ673f/Advocate.jpg"
-SUCCESS_PHOTO_URL = "https://i.ibb.co/PGSnbR2G/Advocate-Finalact.jpg"  
+SUCCESS_PHOTO_URL = "https://i.ibb.co/PGSnbR2G/Advocate-Finalact.jpg"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message is None:
