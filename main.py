@@ -45,7 +45,7 @@ BOT_TOKEN = os.environ.get('BOT_TOKEN', '8257818553:AAFNSfYB7L9gqg285lssp6x9djn1
 ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '744451342')
 
 WELCOME_PHOTO_URL = "https://i.ibb.co/yFdZ673f/Advocate.jpg"
-SUCCESS_PHOTO_URL = "https://i.ibb.co/PGSnbR2G/Advocate-Finalact.jpg"
+SUCCESS_PHOTO_URL = "https://i.ibb.co/PGSnbR2G/Advocate-Finalact.jpg"  
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message is None:
@@ -161,23 +161,17 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         await send_application_to_admin(update, context)
         context.user_data['first_click'] = False
 
-        # Отправляем фото
-        try:
-            await update.message.reply_photo(
-                photo=SUCCESS_PHOTO_URL,
-                caption="✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!"
-            )
-        except Exception as e:
-            logger.error(f"Ошибка отправки фото: {e}")
-            await update.message.reply_text(
-                "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!"
-            )
+        # Отправляем фото с сообщением об успешной записи
+        await update.message.reply_photo(
+            photo=SUCCESS_PHOTO_URL,
+            caption="✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!"
+        )
 
-        # Отправляем кнопку отдельным сообщением
         keyboard = [[KeyboardButton("📝 Записаться на консультацию")]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+
         await update.message.reply_text(
-            " ",
+            "Нажмите кнопку ниже, чтобы начать заполнение заявки:",
             reply_markup=reply_markup
         )
 
