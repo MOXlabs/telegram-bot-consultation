@@ -161,7 +161,6 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         await send_application_to_admin(update, context)
         context.user_data['first_click'] = False
 
-        # Отправляем фото с сообщением об успешной записи
         try:
             await update.message.reply_photo(
                 photo=SUCCESS_PHOTO_URL,
