@@ -88,11 +88,11 @@ async def handle_application_button(update: Update, context: ContextTypes.DEFAUL
         try:
             await update.message.reply_photo(
                 photo=WELCOME_PHOTO_URL,
-                caption="👋 Снова здравствуйте! Заполним новую заявку на консультацию"
+                caption="👋 Привет, я Арина - бот адвоката Алексея Мельникова. Я помогу Вам записаться на консультацию"
             )
         except Exception as e:
             logger.error(f"Ошибка отправки фото: {e}")
-            await update.message.reply_text("👋 Снова здравствуйте! Заполним новую заявку на консультацию")
+            await update.message.reply_text("👋 Привет, я Арина - бот адвоката Алексея Мельникова. Я помогу Вам записаться на консультацию")
 
         await update.message.reply_text(
             "📝 Как к вам обращаться? (ФИО или имя)",
@@ -187,7 +187,7 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
             "🔄 Давайте заполним заявку заново.",
             reply_markup=ReplyKeyboardRemove()
         )
-        await update.message.reply_text("📝 Как к вам обращаться? (ФИО или имя)")
+        await update.message.reply_text("Отлично! Давайте заполним заявку на консультацию.\n\n📝 Как к вам обращаться? (ФИО или имя)")
         return NAME
 
 async def send_application_to_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
