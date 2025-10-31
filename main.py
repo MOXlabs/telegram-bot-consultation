@@ -85,6 +85,7 @@ async def handle_application_button(update: Update, context: ContextTypes.DEFAUL
             reply_markup=ReplyKeyboardRemove()
         )
     else:
+        # При всех последующих нажатиях начинаем с самого начала
         try:
             await update.message.reply_photo(
                 photo=WELCOME_PHOTO_URL,
@@ -92,10 +93,12 @@ async def handle_application_button(update: Update, context: ContextTypes.DEFAUL
             )
         except Exception as e:
             logger.error(f"Ошибка отправки фото: {e}")
-            await update.message.reply_text("👋 Привет, я Арина - бот адвоката Алексея Мельникова. Я помогу Вам записаться на консультацию")
+            await update.message.reply_text(
+                "👋 Привет, я Арина - бот адвоката Алексея Мельникова. Я помогу Вам записаться на консультацию"
+            )
 
         await update.message.reply_text(
-            "📝 Как к вам обращаться? (ФИО или имя)",
+            "Отлично! Давайте заполним заявку на консультацию.\n\n📝 Как к вам обращаться? (ФИО или имя)",
             reply_markup=ReplyKeyboardRemove()
         )
 
