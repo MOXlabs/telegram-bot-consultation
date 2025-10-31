@@ -42,7 +42,7 @@ def format_moscow_time():
 
 # Данные бота
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '8257818553:AAFNSfYB7L9gqg285lssp6x9djn1nBsDxgE')
-ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '744451342')
+ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '465049640')
 
 WELCOME_PHOTO_URL = "https://i.ibb.co/yFdZ673f/Advocate.jpg"
 SUCCESS_PHOTO_URL = "https://i.ibb.co/PGSnbR2G/Advocate-Finalact.jpg"
