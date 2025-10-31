@@ -165,17 +165,17 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         try:
             await update.message.reply_photo(
                 photo=SUCCESS_PHOTO_URL,
-                caption="✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n"
+                caption="✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!"
             )
         except Exception as e:
             logger.error(f"Ошибка отправки фото: {e}")
             await update.message.reply_text(
-                "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!\n\n"
+                "✅ Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время!"
             )
 
+        # Отправляем кнопку отдельным сообщением
         keyboard = [[KeyboardButton("📝 Записаться на консультацию")]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-
         await update.message.reply_text(
             " ",
             reply_markup=reply_markup
