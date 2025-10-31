@@ -175,7 +175,11 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         keyboard = [[KeyboardButton("📝 Записаться на консультацию")]]
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
-
+        await update.message.reply_text(
+            "Нажмите кнопку ниже, чтобы начать заполнение заявки:",
+            reply_markup=reply_markup
+        )
+        
         # Очищаем данные анкеты
         for key in ['name', 'contact', 'problem', 'datetime']:
             if key in context.user_data:
