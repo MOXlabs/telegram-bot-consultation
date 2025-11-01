@@ -68,7 +68,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
     await update.message.reply_text(
-        "Нажмите на кнопку ниже, чтобы начать заполнение заявки:\n\n (Если кнопка не появилась напишите мне /start или нажмите на квадрат рядом с голосовым сообщением)",
+        "Нажмите на кнопку ниже, чтобы начать заполнение заявки:\n\n (Если кнопка не появилась, напишите мне /start или нажмите на квадрат рядом с голосовым сообщением)",
         reply_markup=reply_markup
     )
 
@@ -174,7 +174,7 @@ async def confirm_application(update: Update, context: ContextTypes.DEFAULT_TYPE
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
         await update.message.reply_text(
-            "Нажмите на кнопку ниже, чтобы начать заполнение заявки:\n\n (Если кнопка не появилась напишите мне /start или нажмите на квадрат рядом с голосовым сообщением)",
+            "Нажмите на кнопку ниже, чтобы начать заполнение заявки:\n\n (Если кнопка не появилась, напишите мне /start или нажмите на квадрат рядом с голосовым сообщением)",
             reply_markup=reply_markup
         )
 
